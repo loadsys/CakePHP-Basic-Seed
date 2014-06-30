@@ -1,0 +1,20 @@
+{
+  "name": "loadsys/cakephp-basic-seed",
+  "description": "CakePHP Basic Seed shell",
+  "type": "cakephp-plugin",
+  "keywords": ["testing", "cakephp", "shell"],
+  "homepage": "http://github.com/loadsys/CakePHP-Basic-Seed",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Loadsys Web Strategies",
+      "homepage": "https://www.loadsys.com/"
+    }
+  ],
+  "support": {
+    "source": "https://github.com/loadsys/CakePHP-Basic-Seed/issues"
+  },
+  "require": {
+    "php": ">=5.3"
+  }
+}
