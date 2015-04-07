@@ -33,8 +33,8 @@ class BasicSeedShell extends BasicSeedAppShell {
 			if ($Model->save()) {
 				$record = $Model->read();
 			} else {
-				$cond = var_export($conditions);
-				$this->out("Failed to create {$Model} record for conditions:\n\n{$cond}");
+				$cond = var_export($conditions, true);
+				$this->out("Failed to create {$Model->alias} record for conditions:\n\n{$cond}");
 				exit();
 			}
 		}
