@@ -35,6 +35,10 @@ class BasicSeedShell extends BasicSeedAppShell {
 			} else {
 				$cond = var_export($conditions, true);
 				$this->out("Failed to create {$Model->alias} record for conditions:\n\n{$cond}");
+				if (!empty($Model->validationErrors)) {
+					$validationErrors = var_export($Model->validationErrors, true);
+					$this->out("Validation errors encountered:\n\n{$validationErrors}");
+				}
 				exit();
 			}
 		}
