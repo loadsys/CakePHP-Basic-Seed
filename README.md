@@ -4,7 +4,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Total Downloads](https://img.shields.io/packagist/dt/loadsys/cakephp-basic-seed.svg?style=flat-square)](https://packagist.org/packages/loadsys/cakephp-basic-seed)
 
-Provides a simple mechanism for seeding data into an application's database.
+Provides a simple mechanism for seeding data into your CakePHP application's database.
 
 ## Requirements
 
@@ -43,7 +43,23 @@ Console/cake BasicSeed.seed --file seed_staging.php
 
 Will use the file located at `Config/seed_staging.php`
 
-`Console/cake BasicSeed.seed init` or `Console/cake BasicSeed.seed init --dev` or `Console/cake BasicSeed.seed init --file seed_staging.php` will create the files in your app's `Config/`
+To create a `seed.php` file
+
+````bash
+Console/cake BasicSeed.seed init
+````
+
+To create a `seed_dev.php` file
+
+````bash
+Console/cake BasicSeed.seed init --dev
+````
+
+To create a custom seed file, you can use the `--file` parameter.
+
+````bash
+Console/cake BasicSeed.seed init --file seed_staging.php
+````
 
 ## Contributing
 
