@@ -30,7 +30,7 @@ CakePlugin::load('BasicSeed');
 This is a command line plugin, to use:
 
 ````bash
-Console/cake BasicSeed.seed` or `Console/cake BasicSeed.seed --dev
+Console/cake BasicSeed.basic_seed` or `Console/cake BasicSeed.basic_seed --dev
 ````
 
 This runs the `Config/seed.php` and --dev runs `Config/seed_dev.php` seed file
@@ -38,7 +38,7 @@ This runs the `Config/seed.php` and --dev runs `Config/seed_dev.php` seed file
 You can also specify `--file` and it will use the file specified (inside of `Config/`)
 
 ````bash
-Console/cake BasicSeed.seed --file seed_staging.php
+Console/cake BasicSeed.basic_seed --file seed_staging.php
 ````
 
 Will use the file located at `Config/seed_staging.php`
@@ -46,19 +46,19 @@ Will use the file located at `Config/seed_staging.php`
 To create a `seed.php` file
 
 ````bash
-Console/cake BasicSeed.seed init
+Console/cake BasicSeed.basic_seed init
 ````
 
 To create a `seed_dev.php` file
 
 ````bash
-Console/cake BasicSeed.seed init --dev
+Console/cake BasicSeed.basic_seed init --dev
 ````
 
 To create a custom seed file, you can use the `--file` parameter.
 
 ````bash
-Console/cake BasicSeed.seed init --file seed_staging.php
+Console/cake BasicSeed.basic_seed init --file seed_staging.php
 ````
 
 ## Contributing
