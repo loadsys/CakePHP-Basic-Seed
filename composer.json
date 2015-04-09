@@ -1,8 +1,12 @@
 {
   "name": "loadsys/cakephp-basic-seed",
-  "description": "CakePHP Basic Seed shell",
+  "description": "Provides a simple mechanism for seeding data into a CakePHP application's database.",
   "type": "cakephp-plugin",
-  "keywords": ["testing", "cakephp", "shell"],
+  "keywords": [
+    "testing",
+    "cakephp",
+    "shell"
+  ],
   "homepage": "http://github.com/loadsys/CakePHP-Basic-Seed",
   "license": "MIT",
   "authors": [
@@ -12,10 +16,12 @@
     }
   ],
   "support": {
-    "source": "https://github.com/loadsys/CakePHP-Basic-Seed/issues"
+    "issues": "https://github.com/loadsys/CakePHP-Basic-Seed/issues",
+    "source": "https://github.com/loadsys/CakePHP-Basic-Seed"
   },
   "require": {
-    "php": ">=5.3"
+    "php": ">=5.3",
+    "composer/installers": "~1.0"
   },
   "extra": {
     "installer-name": "BasicSeed"
