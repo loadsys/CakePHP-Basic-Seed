@@ -27,13 +27,21 @@ $ composer require loadsys/cakephp-basic-seed:~1.0
 CakePlugin::load('BasicSeed');
 ````
 
-`Console/cake BasicSeed.seed` or `Console/cake BasicSeed.seed --dev`
+This is a command line plugin, to use:
 
-regular runs the Config/seed.php and --dev runs Config/seed_dev.php
+````bash
+Console/cake BasicSeed.seed` or `Console/cake BasicSeed.seed --dev
+````
 
-you can also specify --file and it will use whatever you specify (inside of Config)
+This runs the `Config/seed.php` and --dev runs `Config/seed_dev.php` seed file
 
-`Console/cake BasicSeed.seed --file seed_staging.php` uses Config/seed_staging.php
+You can also specify `--file` and it will use the file specified (inside of `Config/`)
+
+````bash
+Console/cake BasicSeed.seed --file seed_staging.php
+````
+
+Will use the file located at `Config/seed_staging.php`
 
 `Console/cake BasicSeed.seed init` or `Console/cake BasicSeed.seed init --dev` or `Console/cake BasicSeed.seed init --file seed_staging.php` will create the files in your app's `Config/`
 
