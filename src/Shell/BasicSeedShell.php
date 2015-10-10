@@ -11,11 +11,9 @@ namespace BasicSeed\Shell;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Log\Log;
-
-use Cake\ORM\Table;
 use Cake\ORM\Entity;
+use Cake\ORM\Table;
 use Cake\Utility\Hash;
-
 
 /**
  * BasicSeed Shell
@@ -62,6 +60,9 @@ class BasicSeedShell extends Shell {
 	 * 	$data = [
 	 * 		'TableName' => [ // Name of the table to import.
 	 * 			//'_truncate' => true, // Will remove all existing records when present and true.
+	 * 			//'_options' => [ // Define options to pass to newEntity(). Allows for disabling validation
+	 * 			//	'validate' => false,
+	 * 			//],
 	 * 			'_defaults' => [ // Define default values for fields.
 	 * 				'author' => 'Jane Doe',
 	 * 				'is_published' => true,
@@ -80,13 +81,13 @@ class BasicSeedShell extends Shell {
 	 * 	];
 	 *
 	 * @param array $data Array of [TableName => [ [record 1], [record 2]] sets.
-	 * @return
+	 * @return void
 	 */
 	public function importTables(array $data) {
 		$tableCount = count($data);
 		$this->out("<info>Starting seed of {$tableCount} table(s).</info>");
 
-		foreach($data as $table => $records) {
+		foreach ($data as $table => $records) {
 			$this->out("<info>{$table}</info>");
 
 			// Set default field values.
@@ -97,15 +98,24 @@ class BasicSeedShell extends Shell {
 				$this->out("<info>{$table}: Default values set.</info>");
 			}
 
+			// Set entity options, if present.
+			$options = [];
+			if (array_key_exists('_options', $records)) {
+				$options = $records['_options'];
+				unset($records['_options']);
+				$this->out("<info>{$table}: Entity options set.</info>");
+			}
+
 			// Truncate the table, if requested.
 			$Table = $this->loadModel($table);
 			if (array_key_exists('_truncate', $records) && $records['_truncate']) {
 				$this->truncateTable($Table);
 			}
+
 			unset($records['_truncate']);
 
 			// Create or update all defined records.
-			$this->importTable($Table, $this->entityGenerator($Table, $records, $defaults));
+			$this->importTable($Table, $this->entityGenerator($Table, $records, $defaults, $options));
 		}
 
 		$this->out("<info>Seeding complete.</info>");
@@ -124,15 +134,24 @@ class BasicSeedShell extends Shell {
 	 *
 	 * @param Cake\ORM\Table $Table A Table instance to save records into.
 	 * @param array $records An array of Entity records to save into the Table.
+	 * @param array $defaults Optional array of default field values to merge into each record.
+	 * @param array $options Optional array of newEntity() options to use.
 	 * @return void
 	 */
-	public function entityGenerator(Table $Table, array $records, array $defaults = []) {
+	public function entityGenerator(Table $Table, array $records, array $defaults = [], array $options = []) {
+		$defaultOptions = [
+			'validate' => true,
+		];
+		$options = $options + $defaultOptions;
+
 		foreach ($records as $i => $r) {
-			$r = $Table->newEntity(Hash::merge($defaults, $r));
-			if ($errors = $r->errors()) {
+			$r = $Table->newEntity(Hash::merge($defaults, $r), $options);
+			$errors = $r->errors();
+			if ($errors) {
 				$this->printValidationErrors($Table->alias(), $this->findKey($Table, $r), $errors);
 				continue;
 			}
+
 			yield $r;
 		}
 	}
@@ -184,8 +203,8 @@ class BasicSeedShell extends Shell {
 	/**
 	 * Helper method to find the primary key for a record.
 	 *
-	 * @param Table $Table An instantiated Table object.
-	 * @param array $record The record being saved into the DB.
+	 * @param Cake\ORM\Table $Table An instantiated Table object.
+	 * @param Cake\ORM\ntity $entity The record being saved into the DB.
 	 * @return string The numeric or UUID value of the record's primary key, or 'unknown' on failure.
 	 */
 	protected function findKey(Table $Table, Entity $entity) {
@@ -194,6 +213,7 @@ class BasicSeedShell extends Shell {
 		} else {
 			$key = 'unknown';
 		}
+
 		return $key;
 	}
 
@@ -206,7 +226,7 @@ class BasicSeedShell extends Shell {
 	 * @return void
 	 */
 	protected function printValidationErrors($table, $id, $errors) {
-		foreach($errors as $field => $messages) {
+		foreach ($errors as $field => $messages) {
 			foreach ((array)$messages as $message) {
 				$this->out("<warning>{$table} ({$id}): {$field}: {$message}</warning>");
 			}
@@ -228,6 +248,7 @@ class BasicSeedShell extends Shell {
 		if (!empty($this->params['file'])) {
 			$file = $this->params['file'];
 		}
+
 		return $file;
 	}
 
@@ -267,9 +288,25 @@ class BasicSeedShell extends Shell {
  */
 
 namespace App\Config\BasicSeed;
+
 use Cake\ORM\TableRegistry;
 
 // Write your data import statements here.
+$data = [
+	'TableName' => [
+		//'_truncate' => true,
+		//'_options' => [
+		//	'validate' => false,
+		//],
+		'_defaults' => [],
+		[
+			'id' => 1,
+			'name' => 'record 1',
+		],
+	],
+];
+
+$this->importTables($data);
 
 EOD
 			);
