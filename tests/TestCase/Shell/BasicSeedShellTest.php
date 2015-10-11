@@ -2,17 +2,15 @@
 /**
  * Tests for the BasicSeedShell class.
  */
+
 namespace BasicSeed\Test\TestCase\Shell;
 
 use BasicSeed\Shell\BasicSeedShell;
+use Cake\Cache\Cache;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
-
-use Cake\Cache\Cache;
-// use Cake\Console\Shell;
-// use Cake\Core\Configure;
 
 /**
  * TestBasicSeedShell class
@@ -23,11 +21,18 @@ class TestBasicSeedShell extends BasicSeedShell {
 // 	public function simpleFetchAndPrint() {
 // 		return parent::simpleFetchAndPrint();
 // 	}
+/*
+	truncateTable
+	findKey
+	printValidationErrors
+	getFile
+	existsOrCreate
+	absolutePath
+*/
 }
 
 /**
  * BasicSeedShellTest class
- *
  */
 class BasicSeedShellTest extends TestCase {
 
@@ -239,24 +244,12 @@ class BasicSeedShellTest extends TestCase {
 	}
 
 	/**
-	 * Confirm that startup() engages help output when flag is present.
+	 * test init().
 	 *
 	 * @return void
 	 */
-	public function testStartupHelp() {
-		$this->Shell->expects($this->once())
-			->method('_displayHelp');
-
-		Cache::config('_cake_core_', [
-			'className' => 'File',
-		]);
-		$this->Shell->startup();
-
-		$this->assertContains(
-			'Provides a mechanism for loading data into any of Cake\'s configured',
-			$this->output,
-			'Shell should output help() when no args are provided.'
-		);
+	public function testInit() {
+		$this->markTestIncomplete('@TODO: write test for init().');
 	}
 
 	/**
@@ -264,151 +257,89 @@ class BasicSeedShellTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testMainSimple() {
+	public function testMain() {
 		$this->markTestIncomplete('@TODO: write test for main().');
-
-		$expected = [
-			'key' => 'val',
-			'debug' => true,
-			'ary' => [
-				'foo' => 'bar',
-				'fizz' => 'buzz',
-			],
-		];
-
-		$shell = $this->initSUT(['fetchVal', 'iterateOnKey']);
-		$shell->args = array_keys($expected);
-
-		$i = 0;
-		foreach ($expected as $k => $v) {
-			$shell->expects($this->at($i++))
-				->method('fetchVal')
-				->with($k)
-				->will($this->returnValue($v));
-			$shell->expects($this->at($i++))
-				->method('iterateOnKey')
-				->with($k, $v);
-		}
-
-		// Can't use runCommand() because it requires a host Cake app.
-		//$shell->runCommand(array_keys($expected));
-		// So simulate startup and execution directly:
-		$shell->startup();
-		$shell->main();
-
-		$this->assertTrue(
-			$shell->formatBash,
-			'Bash output should be engaged automatically by presence of multiple command line args.'
-		);
 	}
 
 	/**
-	 * test main(), including associated protected methods, using simple output.
+	 * test importTables().
 	 *
 	 * @return void
 	 */
-	public function testMainSimpleIntegration() {
-		$this->markTestIncomplete('@TODO: write test for main().');
-
-		$configure = [
-			'key' => 'val',
-			'debug' => true,
-			'ary' => [
-				'foo' => 'bar',
-				'fizz' => 'buzz',
-			],
-		];
-		$expected = [
-			"KEY='val'",
-			"DEBUG='1'",
-			"ARY_FOO='bar'",
-			"ARY_FIZZ='buzz'",
-		];
-		Configure::write($configure);
-		$this->Shell->args = array_keys($configure);
-
-		$this->Shell->startup();
-		$this->Shell->main();
-
-		$this->assertEquals(
-			$expected,
-			$this->output,
-			'The output produced from running the shell on the given arguments should match our expected result.'
-		);
-		$this->assertTrue(
-			$this->Shell->formatBash,
-			'Bash output should be engaged automatically by presence of multiple command line args.'
-		);
+	public function testImportTables() {
+		$this->markTestIncomplete('@TODO: write test for importTables().');
 	}
 
 	/**
-	 * test main(), including associated protected methods, using simple output.
+	 * test entityGenerator().
 	 *
-	 * @param array $args Array of arguments to seed the Shell->args with.
-	 * @param array $expected Array of generated output lines to compare to ::$output.
-	 * @param string $msg Optional PHPUnit assertion failure message.
 	 * @return void
-	 * @dataProvider provideSerializedArgs
 	 */
-	public function testMainSerializedIntegration($args, $expected, $msg = '') {
-		$this->markTestIncomplete('@TODO: write test for main().');
-
-		$configure = [
-			'key' => 'val',
-			'debug' => true,
-			'ary' => [
-				'one' => 1,
-				'two' => '2',
-				3 => 'three',
-				'stdClass' => (new \StdClass()),
-			],
-		];
-
-		Configure::write($configure);
-		$this->Shell->params['serialize'] = true;
-		$this->Shell->args = $args;
-
-		$this->Shell->startup();
-		$this->Shell->main();
-
-		$this->assertEquals(
-			$expected,
-			$this->output,
-			$msg
-		);
-		$this->assertTrue(
-			$this->Shell->formatSerialize,
-			'Serialized output should be engaged from the provided param.'
-		);
+	public function testEntityGenerator() {
+		$this->markTestIncomplete('@TODO: write test for entityGenerator().');
 	}
 
 	/**
-	 * Provides input arguments to testMainSerializedIntegration().
+	 * test importTable().
 	 *
-	 * All keys named in the [args] elements must exist in
-	 * $configure as defined in testMainSerializedIntegration() above.
-	 *
-	 * @return array
+	 * @return void
 	 */
-	public function provideSerializedArgs() {
-		return [
-			[
-				[''], // Args to load in the Shell.
-				['N;'], // Expected lines of output.
-				'Empty input should produce a serialized `null` string.', // PHPUnit assertion failure message.
-			],
-
-			[
-				['key'],
-				['s:3:"val";'],
-				'Single scalar value should be serialized directly.',
-			],
-
-			[
-				['key', 'ary.stdClass'],
-				['a:2:{s:3:"key";s:3:"val";s:12:"ary.stdClass";O:8:"stdClass":0:{}}'],
-				'Multiple requested keys should be combined into a (serialized) associative array.',
-			],
-		];
+	public function testImportTable() {
+		$this->markTestIncomplete('@TODO: write test for importTable().');
 	}
+
+	/**
+	 * test truncateTable().
+	 *
+	 * @return void
+	 */
+	public function testTruncateTable() {
+		$this->markTestIncomplete('@TODO: write test for truncateTable().');
+	}
+
+	/**
+	 * test findKey().
+	 *
+	 * @return void
+	 */
+	public function testFindKey() {
+		$this->markTestIncomplete('@TODO: write test for findKey().');
+	}
+
+	/**
+	 * test printValidationErrors().
+	 *
+	 * @return void
+	 */
+	public function testPrintValidationErrors() {
+		$this->markTestIncomplete('@TODO: write test for printValidationErrors().');
+	}
+
+	/**
+	 * test getFile().
+	 *
+	 * @return void
+	 */
+	public function testGetFile() {
+		$this->markTestIncomplete('@TODO: write test for getFile().');
+	}
+
+	/**
+	 * test existsOrCreate().
+	 *
+	 * @return void
+	 */
+	public function testExistsOrCreate() {
+		$this->markTestIncomplete('@TODO: write test for existsOrCreate().');
+	}
+
+	/**
+	 * test absolutePath().
+	 *
+	 * @return void
+	 */
+	public function testAbsolutePath() {
+		$this->markTestIncomplete('@TODO: write test for absolutePath().');
+	}
+
 }

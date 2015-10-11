@@ -35,6 +35,17 @@ class BasicSeedShell extends Shell {
 	public $seedDevFile = 'seed_dev.php';
 
 	/**
+	 * Public method used for creating a new blank seed file.
+	 *
+	 * @return void
+	 */
+	public function init() {
+		$path = $this->absolutePath($this->getFile());
+		$this->out('Initializing seed file: ' . $this->shortPath($path));
+		$this->existsOrCreate($path);
+	}
+
+	/**
 	 * Executes the proper seed file.
 	 *
 	 * Initializes an empty seed file first if it does not already exist.
@@ -42,7 +53,6 @@ class BasicSeedShell extends Shell {
 	 * @return int|void
 	 */
 	public function main() {
-		$this->existsOrCreate($this->absolutePath($this->getFile()));
 		$this->includeFile($this->absolutePath($this->getFile()));
 		$this->out("...Done!");
 	}
@@ -264,7 +274,7 @@ class BasicSeedShell extends Shell {
 	 * @return void
 	 */
 	protected function includeFile($file) {
-		$this->out('Loading seed file `' . $this->shortPath($file) . '`...');
+		$this->out('Loading seed file: ' . $this->shortPath($file));
 		include $file;
 	}
 
@@ -274,12 +284,14 @@ class BasicSeedShell extends Shell {
 	 * This is called during initialize to ensure that the file is
 	 * _always_ available for reading.
 	 *
+	 * @TODO: Convert this into a proper bake template.
+	 *
 	 * @param string $file The full filesystem path to check/create.
 	 * @return void
 	 */
 	protected function existsOrCreate($file) {
 		if (!file_exists($file)) {
-			$this->out('Seed file `' . $this->shortPath($file) . '` does not exist. Creating empty seed.');
+			$this->out('Creating empty seed file: ' . $this->shortPath($file));
 
 			file_put_contents($file, <<<EOD
 <?php
@@ -336,6 +348,9 @@ EOD
 			->description(
 				'Provides a mechanism for loading data into any of Cake\'s configured databases.'
 			)
+			->addSubcommand('init', [
+				'help' => 'Initialize a new, empty seed file. Respects both the --dev and --file options.',
+			])
 			->addOption('dev', [
 				'short' => 'd',
 				'boolean' => true,
@@ -344,7 +359,7 @@ EOD
 			])
 			->addOption('file', [
 				'short' => 'f',
-				'help' => 'Manually specify the file that should be used. This option overrides the --dev option. When this option is present, its argument will always be used explicitly.'
+				'help' => 'Manually specify the file that should be used. When this option is present, its argument will always be used explicitly, overriding the --dev option if it is also present.'
 			]);
 		return $parser;
 	}

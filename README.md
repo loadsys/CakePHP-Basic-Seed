@@ -8,57 +8,65 @@ Provides a simple mechanism for seeding data into your CakePHP application's dat
 
 ## Requirements
 
-* PHP 5.3+
-* CakePHP 2.0+
+* PHP 5.6+
+* CakePHP 3.0+
+
+:warning: Check the [cake-2.x branch](https://github.com/loadsys/CakePHP-Basic-Seed/tree/cake-2.x) for the CakePHP v2.x compatible version. The `1.x.x` semver series maintains compatibility with CakePHP 2, while `~2` tracks CakePHP 3.
+
 
 ## Installation
 
 ### Composer
 
 ````bash
-$ composer require loadsys/cakephp-basic-seed:~1.0
+$ composer require loadsys/cakephp-basic-seed:~2.0
 ````
 
 ## Usage
 
-* Add this plugin to your application by adding this line to your bootstrap.php
+* Add this plugin to your application by adding this line to your `bootstrap.php`:
 
 ````php
-CakePlugin::load('BasicSeed');
+Plugin::load('BasicSeed', ['bootstrap' => false, 'routes' => false]);
 ````
 
-This is a command line plugin, to use:
+This is a command line plugin. To use it:
 
 ````bash
-Console/cake BasicSeed.basic_seed` or `Console/cake BasicSeed.basic_seed --dev
+bin/cake BasicSeed.basic_seed
+# Runs the `config/seed.php` seed file.
+
+# or
+bin/cake BasicSeed.basic_seed --dev
+
+# Runs `config/seed_dev.php` seed file.
 ````
 
-This runs the `Config/seed.php` and --dev runs `Config/seed_dev.php` seed file
-
-You can also specify `--file` and it will use the file specified (inside of `Config/`)
+You can also specify `--file` and it will use the file specified (inside of `config/`)
 
 ````bash
-Console/cake BasicSeed.basic_seed --file seed_staging.php
+bin/cake BasicSeed.basic_seed --file seed_staging.php
+# Will use the file located at `config/seed_staging.php`.
+# This option always overrides --dev.
 ````
 
-Will use the file located at `Config/seed_staging.php`
 
-To create a `seed.php` file
+To create a `seed.php` file, run the `init` command:
 
 ````bash
-Console/cake BasicSeed.basic_seed init
+bin/cake BasicSeed.basic_seed init
 ````
 
-To create a `seed_dev.php` file
+To create a `seed_dev.php` file:
 
 ````bash
-Console/cake BasicSeed.basic_seed init --dev
+bin/cake BasicSeed.basic_seed init --dev
 ````
 
 To create a custom seed file, you can use the `--file` parameter.
 
 ````bash
-Console/cake BasicSeed.basic_seed init --file seed_staging.php
+bin/cake BasicSeed.basic_seed init --file seed_staging.php
 ````
 
 ## Contributing
@@ -71,9 +79,11 @@ Please use [GitHub Isuses](https://github.com/loadsys/CakePHP-Basic-Seed/issues)
 
 When developing this plugin, please fork and issue a PR for any new development.
 
+
 ## License ##
 
 [MIT](https://github.com/loadsys/CakePHP-Basic-Seed/blob/master/LICENSE.md)
+
 
 ## Copyright ##
 
