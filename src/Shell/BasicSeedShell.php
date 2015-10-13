@@ -293,7 +293,7 @@ class BasicSeedShell extends Shell {
 		if (!file_exists($file)) {
 			$this->out('Creating empty seed file: ' . $this->shortPath($file));
 
-			file_put_contents($file, <<<EOD
+			file_put_contents($file, <<<'EOD'
 <?php
 /**
  * BasicSeed plugin data seed file.
