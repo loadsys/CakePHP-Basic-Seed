@@ -109,11 +109,24 @@ class BasicSeedShell extends Shell {
 			}
 
 			// Set entity options, if present.
-			$options = [];
+			$entityOptions = [];
 			if (array_key_exists('_options', $records)) {
-				$options = $records['_options'];
+				$entityOptions = $records['_options'];
 				unset($records['_options']);
+				$this->out("<info>{$table}: Entity options set, but...</info>");
+				$this->out("<warning>{$table}: Deprecation notice: Change [_options] to [_entityOptions].</warning>");
+			} elseif (array_key_exists('_entityOptions', $records)) {
+				$entityOptions = $records['_entityOptions'];
+				unset($records['_entityOptions']);
 				$this->out("<info>{$table}: Entity options set.</info>");
+			}
+
+			// Set save options, if present.
+			$saveOptions = [];
+			if (array_key_exists('_saveOptions', $records)) {
+				$saveOptions = $records['_saveOptions'];
+				unset($records['_saveOptions']);
+				$this->out("<info>{$table}: Table save() options set.</info>");
 			}
 
 			// Truncate the table, if requested.
@@ -125,7 +138,11 @@ class BasicSeedShell extends Shell {
 			unset($records['_truncate']);
 
 			// Create or update all defined records.
-			$this->importTable($Table, $this->entityGenerator($Table, $records, $defaults, $options));
+			$this->importTable(
+				$Table,
+				$this->entityGenerator($Table, $records, $defaults, $entityOptions),
+				$saveOptions
+			);
 		}
 
 		$this->out("<info>Seeding complete.</info>");
@@ -148,21 +165,54 @@ class BasicSeedShell extends Shell {
 	 * @param array $options Optional array of newEntity() options to use.
 	 * @return void
 	 */
-	public function entityGenerator(Table $Table, array $records, array $defaults = [], array $options = []) {
+	public function entityGenerator(
+		Table $Table,
+		array $records,
+		array $defaults = [],
+		array $options = []
+	) {
 		$defaultOptions = [
 			'validate' => true,
 		];
 		$options = $options + $defaultOptions;
 
-		foreach ($records as $i => $r) {
-			$r = $Table->newEntity(Hash::merge($defaults, $r), $options);
-			$errors = $r->errors();
+		$keyField = $Table->primaryKey();
+
+		foreach ($records as $r) {
+			$r = Hash::merge($defaults, $r);
+
+			$id = (!empty($r[$keyField]) ? $r[$keyField] : false);
+			if ($id) {
+				$entity = $Table->find()->where([$keyField => $id])->first();
+				if ($entity) {
+					$entity = $Table->patchEntity($entity, $r, $options);
+					if (!$entity->dirty()) {
+						$this->out("{$Table->alias()} ({$id}): No changes.");
+						continue;
+					}
+
+				} else {
+					$entity = $Table->newEntity([], $options);
+					$entity->set($r, ['guard' => false]);
+					$entity->isNew(true);
+				}
+
+			} else {
+				$entity = $Table->newEntity($r, $options);
+			}
+
+			$errors = $entity->errors();
 			if ($errors) {
-				$this->printValidationErrors($Table->alias(), $this->findKey($Table, $r), $errors);
+				$this->printValidationErrors(
+					$Table->alias(),
+					$key,
+					$errors
+				);
+
 				continue;
 			}
 
-			yield $r;
+			yield $entity;
 		}
 	}
 
@@ -172,17 +222,30 @@ class BasicSeedShell extends Shell {
 	 * Used by imporTables().
 	 *
 	 * @param Cake\ORM\Table $Table A Table instance to save records into.
-	 * @param array $records An array of Entity records to save into the Table.
+	 * @param array|\Generator $records An array of Entity records to save into the Table.
+	 * @param array $options Options to pass to save().
 	 * @return void
 	 */
-	public function importTable(Table $Table, $records) {
+	public function importTable(Table $Table, $records, array $options = []) {
+		$defaultOptions = [
+			'checkRules' => true,
+		];
+		$options = $options + $defaultOptions;
+
 		foreach ($records as $record) {
-			$result = $Table->save($record);
+			$action = ($record->isNew() ? 'Create' : 'Update');
+			$result = $Table->save($record, $options);
 			$key = $this->findKey($Table, $record);
+
 			if ($result) {
-				$this->out("{$Table->alias()} ({$key}): Save successful.");
+				$this->out("{$Table->alias()} ({$key}): {$action} successful.");
 			} else {
-				$this->out("{$Table->alias()} ({$key}): <warning>Save failed.</warning>");
+				$this->out("<warning>{$Table->alias()} ({$key}): {$action} failed.</warning>");
+				$this->printValidationErrors(
+					$Table->alias(),
+					$this->findKey($Table, $record),
+					$record->errors()
+				);
 			}
 		}
 	}
