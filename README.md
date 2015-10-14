@@ -85,34 +85,76 @@ namespace App\Config\BasicSeed;
 // Write your data import statements here.
 
 $data = [
-	'TableName' => [              // The proper name of the Table into which
-	                              // the records will be imported.
+	/**
+	 * Each key in the top-level of the array must be the proper name of a
+	 * Table into which the contained records will be imported.
+	 */
+	'TableName' => [
 
-		//'_truncate' => true,    // When enabled, ALL existing records will
-		                          // be removed from the table before loading!
+		/**
+		 * When _truncate is enabled, ALL existing records will be removed
+		 * from the table before loading!
+		 */
+		//'_truncate' => true,
 
-		//'_options' => [         // This array is passed to Table::newEntity().
-		//	'validate' => false,  // Can be used to disable validation.
+		/**
+		 * The _entityOptions array is passed to Table::newEntity() and
+		 * Table::patchEntity(). It can be used to disable validation.
+		 */
+		//'_entityOptions' => [
+		//	'validate' => false,
 		//],
 
-		'_defaults' => [          // Provide default values that will be merged
-		                          // into each record before the Entity is
-		                          // created. Can be used to reduce pointless
-		                          // repetition in imported records.
+		/**
+		 * The _saveOptions array is passed to Table::save(). It can be
+		 * used to disable rules checking.
+		 */
+		//'_saveOptions' => [
+		//	'checkRules' => false,
+		//],
+
+		/**
+		 * You can provide default values that will be merged into each
+		 * record before the Entity is created. Can be used to reduce
+		 * unnecessary repetition in imported records.
+		 */
+		'_defaults' => [
 		    'is_active' => true,
 		],
 
-		[                         // Everything else is counted as a separate
-		                          // record to import. Remember that combined
-		                          // with [_defaults], you only need to specify
-		                          // the **unique** fields for each record.
-			'id' => 1,
+		/**
+		 * Everything else is counted as a separate record to import.
+		 * Remember that combined with [_defaults], you only need to specify
+		 * the **unique** fields for each record.
+		 */
+		[
+			/**
+		 	 * Existing DB records will be matched and updated using the
+		 	 * primary key, if provided. Otherwise, the Shell will simply
+		 	 * attempt to insert every record, so be mindful of fields
+		 	 * that require uniqueness.
+		 	 */
+		 	'id' => 1,
 			'name' => 'record 1',
 		],
 	],
 ];
 
+/**
+ * Perform the data import using the array structure above.
+ */
 $this->importTables($data);
+
+/**
+ * If you want to import another seed file in addition to this one (say
+ * for example that in development, you want all of your seed_dev data,
+ * **plus** all of your seed data from production), you can call the
+ * import yourself directly:
+ */
+$this->hr();
+$this->out('<info>Loading production data in addition to dev data...</info>');
+$this->includeFile($this->absolutePath('seed.php'));
+
 
 ```
 
