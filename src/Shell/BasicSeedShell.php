@@ -370,8 +370,11 @@ use Cake\ORM\TableRegistry;
 $data = [
 	'TableName' => [
 		//'_truncate' => true,
-		//'_options' => [
+		//'_entityOptions' => [
 		//	'validate' => false,
+		//],
+		//'_saveOptions' => [
+		//	'checkRules' => false,
 		//],
 		'_defaults' => [],
 		[
