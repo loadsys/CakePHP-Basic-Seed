@@ -35,13 +35,25 @@ class BasicSeedShell extends Shell {
 	public $seedDevFile = 'seed_dev.php';
 
 	/**
+	 * Set up the Shell.
+	 *
+	 * @return void
+	 */
+	public function initialize() {
+		$this->_io->styles('success', ['text' => 'green']);
+		// quiet = (none)/warning, white/yellow
+		// out = info, cyan
+		// verbose = success, green
+	}
+
+	/**
 	 * Public method used for creating a new blank seed file.
 	 *
 	 * @return void
 	 */
 	public function init() {
 		$path = $this->absolutePath($this->getFile());
-		$this->out('Initializing seed file: ' . $this->shortPath($path));
+		$this->quiet('Initializing seed file: ' . $this->shortPath($path));
 		$this->existsOrCreate($path);
 	}
 
@@ -54,7 +66,7 @@ class BasicSeedShell extends Shell {
 	 */
 	public function main() {
 		$this->includeFile($this->absolutePath($this->getFile()));
-		$this->out("...Done!");
+		$this->quiet("...Done!");
 	}
 
 	/**
@@ -105,7 +117,7 @@ class BasicSeedShell extends Shell {
 			if (array_key_exists('_defaults', $records)) {
 				$defaults = $records['_defaults'];
 				unset($records['_defaults']);
-				$this->out("<info>{$table}: Default values set.</info>");
+				$this->verbose("<success>{$table}: Default values set.</success>");
 			}
 
 			// Set entity options, if present.
@@ -113,12 +125,12 @@ class BasicSeedShell extends Shell {
 			if (array_key_exists('_options', $records)) {
 				$entityOptions = $records['_options'];
 				unset($records['_options']);
-				$this->out("<info>{$table}: Entity options set, but...</info>");
-				$this->out("<warning>{$table}: Deprecation notice: Change [_options] to [_entityOptions].</warning>");
+				$this->verbose("<success>{$table}: Entity options set, but...</success>");
+				$this->quiet("<warning>{$table}: Deprecation notice: Change [_options] to [_entityOptions].</warning>");
 			} elseif (array_key_exists('_entityOptions', $records)) {
 				$entityOptions = $records['_entityOptions'];
 				unset($records['_entityOptions']);
-				$this->out("<info>{$table}: Entity options set.</info>");
+				$this->verbose("<success>{$table}: Entity options set.</success>");
 			}
 
 			// Set save options, if present.
@@ -126,7 +138,7 @@ class BasicSeedShell extends Shell {
 			if (array_key_exists('_saveOptions', $records)) {
 				$saveOptions = $records['_saveOptions'];
 				unset($records['_saveOptions']);
-				$this->out("<info>{$table}: Table save() options set.</info>");
+				$this->verbose("<success>{$table}: Table save() options set.</success>");
 			}
 
 			// Truncate the table, if requested.
@@ -187,7 +199,7 @@ class BasicSeedShell extends Shell {
 				if ($entity) {
 					$entity = $Table->patchEntity($entity, $r, $options);
 					if (!$entity->dirty()) {
-						$this->out("{$Table->alias()} ({$id}): No changes.");
+						$this->verbose("<success>{$Table->alias()} ({$id}): No changes.</success>");
 						continue;
 					}
 
@@ -238,9 +250,9 @@ class BasicSeedShell extends Shell {
 			$key = $this->findKey($Table, $record);
 
 			if ($result) {
-				$this->out("{$Table->alias()} ({$key}): {$action} successful.");
+				$this->verbose("<success>{$Table->alias()} ({$key}): {$action} successful.</success>");
 			} else {
-				$this->out("<warning>{$Table->alias()} ({$key}): {$action} failed.</warning>");
+				$this->quiet("<warning>{$Table->alias()} ({$key}): {$action} failed.</warning>");
 				$this->printValidationErrors(
 					$Table->alias(),
 					$this->findKey($Table, $record),
@@ -265,9 +277,9 @@ class BasicSeedShell extends Shell {
 		$truncateSql = $Table->schema()->truncateSql($Table->connection())[0];
 		$success = $Table->connection()->query($truncateSql);
 		if ($success) {
-			$this->out("<info>{$Table->alias()}: Existing DB records truncated.</info>");
+			$this->verbose("<success>{$Table->alias()}: Existing DB records truncated.</success>");
 		} else {
-			$this->out("<warning>{$Table->alias()}: Can not truncate existing records.</warning>");
+			$this->quiet("<warning>{$Table->alias()}: Can not truncate existing records.</warning>");
 		}
 
 		return $success;
@@ -301,7 +313,7 @@ class BasicSeedShell extends Shell {
 	protected function printValidationErrors($table, $id, $errors) {
 		foreach ($errors as $field => $messages) {
 			foreach ((array)$messages as $message) {
-				$this->out("<warning>{$table} ({$id}): {$field}: {$message}</warning>");
+				$this->quiet("<warning>{$table} ({$id}): {$field}: {$message}</warning>");
 			}
 		}
 	}
@@ -337,7 +349,7 @@ class BasicSeedShell extends Shell {
 	 * @return void
 	 */
 	protected function includeFile($file) {
-		$this->out('Loading seed file: ' . $this->shortPath($file));
+		$this->quiet('Loading seed file: ' . $this->shortPath($file));
 		include $file;
 	}
 
@@ -354,7 +366,7 @@ class BasicSeedShell extends Shell {
 	 */
 	protected function existsOrCreate($file) {
 		if (!file_exists($file)) {
-			$this->out('Creating empty seed file: ' . $this->shortPath($file));
+			$this->out('<info>Creating empty seed file: ' . $this->shortPath($file) . '</info>');
 
 			file_put_contents($file, <<<'EOD'
 <?php
