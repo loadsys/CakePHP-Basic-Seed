@@ -185,6 +185,7 @@ class BasicSeedShell extends Shell {
 	) {
 		$defaultOptions = [
 			'validate' => true,
+			'accessibleFields' => ['*' => true],
 		];
 		$options = $options + $defaultOptions;
 
@@ -204,8 +205,7 @@ class BasicSeedShell extends Shell {
 					}
 
 				} else {
-					$entity = $Table->newEntity([], $options);
-					$entity->set($r, ['guard' => false]);
+					$entity = $Table->newEntity($r, $options);
 					$entity->isNew(true);
 				}
 
@@ -217,7 +217,7 @@ class BasicSeedShell extends Shell {
 			if ($errors) {
 				$this->printValidationErrors(
 					$Table->alias(),
-					$key,
+					$id,
 					$errors
 				);
 
@@ -241,6 +241,7 @@ class BasicSeedShell extends Shell {
 	public function importTable(Table $Table, $records, array $options = []) {
 		$defaultOptions = [
 			'checkRules' => true,
+			'checkExisting' => true,
 		];
 		$options = $options + $defaultOptions;
 
