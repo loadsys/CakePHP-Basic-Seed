@@ -100,6 +100,14 @@ $data = [
 		/**
 		 * The _entityOptions array is passed to Table::newEntity() and
 		 * Table::patchEntity(). It can be used to disable validation.
+		 *
+		 * Also be aware that the Shell sets
+		 * `['accessibleFields' => ['*' => true]]` by default in order to
+		 * more easily "prime" new Entities with all of the values
+		 * specified in $data, including fixed primary keys. This bypasses
+		 * your normal Entity `::$_accessible` settings, so it's good to
+		 * be aware of this if you're using a seed to "refresh" existing
+		 * data.
 		 */
 		//'_entityOptions' => [
 		//	'validate' => false,
