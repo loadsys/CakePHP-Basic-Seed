@@ -438,7 +438,7 @@ EOD
 			])
 			->addOption('file', [
 				'short' => 'f',
-				'help' => 'Manually specify the file that should be used. When this option is present, its argument will always be used explicitly, overriding the --dev option if it is also present.'
+				'help' => 'Manually specify the file that should be used, relative to the config/ directory. When this option is present its argument will always be used explicitly, overriding the --dev option if it is also present. If not specified, the default file `config/seed.php` will be used.'
 			]);
 		return $parser;
 	}
