@@ -1,8 +1,11 @@
 # CakePHP-Basic-Seed
 
+![No Maintenance Intended](http://unmaintained.tech/badge.svg)
 [![Latest Version](https://img.shields.io/github/release/loadsys/CakePHP-Basic-Seed.svg?style=flat-square)](https://github.com/loadsys/CakePHP-Basic-Seed/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Total Downloads](https://img.shields.io/packagist/dt/loadsys/cakephp-basic-seed.svg?style=flat-square)](https://packagist.org/packages/loadsys/cakephp-basic-seed)
+
+## Deprecated Use [CakePHP Seeds](https://book.cakephp.org/3.0/en/migrations.html#seed-seeding-your-database)
 
 Provides a simple mechanism for seeding data into your CakePHP application's database.
 
